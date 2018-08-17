@@ -46,6 +46,13 @@ def response_for_creating_an_answer(question, status_code):
     })), status_code
 
 
+def response_for_get_all_answers(answers, status_code):
+    return make_response(jsonify({
+        'status': 'success',
+        'answers': answers
+    })), status_code
+
+
 def convert_list_to_json(lsty):
     """
     converts a list to json
