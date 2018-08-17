@@ -8,6 +8,7 @@ from app.response_helpers import response_for_get_all_questions
 from app.response_helpers import response_to_fetch_single_question
 from app.response_helpers import response_for_creating_an_answer
 from app.response_helpers import response_for_get_all_answers
+from app.response_helpers import convert_user_answers_list_to_json
 
 
 qtn_bp = Blueprint('question', __name__, url_prefix='/api/v1')
@@ -157,7 +158,7 @@ class AnswerView(MethodView):
         if isinstance(respo, KeyError):
             return response('Question ' + str(respo) + ' does not exist',
                             'failed', 400)
-        answers = convert_list_to_json(respo.answers)
+        answers = convert_user_answers_list_to_json(respo.answers)
         return response_for_get_all_answers(answers, 200)
 
 
