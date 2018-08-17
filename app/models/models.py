@@ -23,3 +23,20 @@ class Question(object):
             "tag": self.tag,
             "answers": self.answers
         }
+
+
+class Answer(object):
+    """
+    Answer Model
+    """
+    def __init__(self, ans_id, body):
+        self.id = ans_id
+        self.body = body
+        self.posted_date = datetime.now()
+
+    def make_json(self):
+        return {
+            "id": self.id,
+            "body": self.body,
+            "date_posted": self.posted_date
+        }
