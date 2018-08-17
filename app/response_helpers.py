@@ -27,6 +27,13 @@ def response_for_get_all_questions(questions, status_code):
     })), status_code
 
 
+def response_to_fetch_single_question(question, status_code):
+    return make_response(jsonify({
+        'status': 'success',
+        'question': question
+    })), status_code
+
+
 def convert_list_to_json(lsty):
     """
     converts a list to json
