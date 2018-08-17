@@ -1,11 +1,12 @@
 from flask import Blueprint, request, jsonify
 from flask.views import MethodView
-from app.models.models import Question
+from app.models.models import Question, Answer
 from app.models.model_manager import question_manager
 from app.response_helpers import response, response_for_creating_question
 from app.response_helpers import convert_list_to_json
 from app.response_helpers import response_for_get_all_questions
 from app.response_helpers import response_to_fetch_single_question
+from app.response_helpers import response_for_creating_an_answer
 
 
 qtn_bp = Blueprint('question', __name__, url_prefix='/api/v1')
@@ -115,11 +116,39 @@ class QuestionView(MethodView):
             'Question {0} has been deleted'.format(qtn_id), 'success', 200)
 
 
+class AnswerView(MethodView):
+
+    methods = ['POST']
+
+    def post(self, qtn_id):
+        """
+        POST request to create an answer to a particular question
+
+        Arguments:
+            MethodView {[type]} -- [description]
+            qtn {[type]} -- [description]
+        """
+        if not request.content_type == 'application/json':
+            return response('request must be of type json', 'failed', 400)
+        sent_data = request.get_json()
+        body = sent_data.get('body')
+        respo = question_manager.get_question(qtn_id)
+
+        if isinstance(respo, KeyError):
+            return response('Question ' + str(respo) + ' does not exist',
+                            'failed', 400)
+        answer = Answer(respo.id, body=body)
+        respo.answers.append(answer.make_json())
+        return response_for_creating_an_answer(respo, 201)
+
+
 # Register a class as a view
 question_list = QuestionsView.as_view('questions')
 question = QuestionView.as_view('question')
+answer = AnswerView.as_view('answer')
 
 
 # Add url_rules for the API endpoints
 qtn_bp.add_url_rule('/questions', view_func=question_list)
 qtn_bp.add_url_rule('/questions/<int:qtn_id>', view_func=question)
+qtn_bp.add_url_rule('/questions/<int:qtn_id>/answers', view_func=answer)
