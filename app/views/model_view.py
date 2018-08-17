@@ -15,6 +15,7 @@ class QuestionsView(MethodView):
 
     methods = ['POST', 'GET']
 
+    # POST
     def post(self):
         """
         POST request to create a question
@@ -36,6 +37,7 @@ class QuestionsView(MethodView):
         return response_for_creating_question(
             question, 201)
 
+    # GET
     def get(self):
         """
         GET request to fetch all questions
@@ -51,9 +53,9 @@ class QuestionsView(MethodView):
 
 class QuestionView(MethodView):
 
-    methods = ['GET', 'PATCH']
+    methods = ['GET', 'PATCH', 'DELETE']
 
-    # Get question by id
+    # GET
     def get(self, qtn_id):
         """
         GET request to fetch a question by id
@@ -67,6 +69,7 @@ class QuestionView(MethodView):
                             'failed', 400)
         return response_to_fetch_single_question(respo.jsonify(), 200)
 
+    # PATCH
     def patch(self, qtn_id):
         """
         PATCH request to update contents
@@ -94,6 +97,22 @@ class QuestionView(MethodView):
         if tag:
             respo.tag = tag
         return response_to_fetch_single_question(respo.jsonify(), 202)
+
+    # DELETE
+    def delete(self, qtn_id):
+        """
+        DELETE request to delete a question by id
+        Arguments:
+            qtn_id {[type]} -- [description]
+        """
+        if not request.content_type == 'application/json':
+            return response('request must be of type json', 'failed', 400)
+        respo = question_manager.delete_question(qtn_id)
+        if isinstance(respo, KeyError):
+            return response('Question ' + str(respo) + ' does not exist',
+                            'failed', 400)
+        return response(
+            'Question {0} has been deleted'.format(qtn_id), 'success', 200)
 
 
 # Register a class as a view
