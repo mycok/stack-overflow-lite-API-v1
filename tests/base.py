@@ -36,3 +36,10 @@ class BaseTestCase(unittest.TestCase):
             '/api/v1/questions', content_type='application/json',
             data=json.dumps(dict(title="seriousness",
                             body="seriousness is needed")))
+
+    def get_all_questions(self):
+        """
+        send a GET request to fetch all question objects
+        """
+        return self.client.get(
+             '/api/v1/questions', content_type='application/json')
