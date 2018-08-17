@@ -53,6 +53,19 @@ def response_for_get_all_answers(answers, status_code):
     })), status_code
 
 
+def convert_user_answers_list_to_json(answers):
+    """
+    convert answers list to json
+    Arguments:
+        lst -- list of answers
+    """
+
+    lst = []
+    for answer in answers:
+        lst.append(answer)
+    return lst
+
+
 def convert_list_to_json(lsty):
     """
     converts a list to json
