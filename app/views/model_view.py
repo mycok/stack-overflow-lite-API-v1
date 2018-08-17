@@ -51,7 +51,7 @@ class QuestionsView(MethodView):
 
 class QuestionView(MethodView):
 
-    methods = ['GET']
+    methods = ['GET', 'PATCH']
 
     # Get question by id
     def get(self, qtn_id):
@@ -66,6 +66,34 @@ class QuestionView(MethodView):
             return response('Question ' + str(respo) + ' does not exist',
                             'failed', 400)
         return response_to_fetch_single_question(respo.jsonify(), 200)
+
+    def patch(self, qtn_id):
+        """
+        PATCH request to update contents
+        of a question by id
+
+        Arguments:
+            qtn_id {[type]} -- [description]
+        """
+        if not request.content_type == 'application/json':
+            return response('request must be of type json', 'failed', 400)
+
+        respo = question_manager.get_question(qtn_id)
+        if isinstance(respo, KeyError):
+            return response('Question ' + str(respo) + ' does not exist',
+                            'failed', 400)
+
+        sent_data = request.get_json()
+        title = sent_data.get('title')
+        body = sent_data.get('body')
+        tag = sent_data.get('tag')
+        if title:
+            respo.title = title
+        if body:
+            respo.body = body
+        if tag:
+            respo.tag = tag
+        return response_to_fetch_single_question(respo.jsonify(), 202)
 
 
 # Register a class as a view
