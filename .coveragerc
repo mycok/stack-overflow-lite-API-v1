@@ -3,7 +3,7 @@ omit =
     */python?.?/*
     */site-packages/nose/*
     */app/*__init__.py
-*/__pycache__/*
+    */__pycache__/*
     *.pyc
     *asyncio/*
     *concurrent/*
