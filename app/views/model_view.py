@@ -2,11 +2,11 @@ from flask import Blueprint, request, jsonify
 from flask.views import MethodView
 from app.models.models import Question, Answer
 from app.models.model_manager import question_manager
-from app.response_helpers import response, response_for_creating_question
+from app.response_helpers import response
+from app.response_helpers import response_for_returning_single_question
 from app.response_helpers import convert_list_to_json
 from app.response_helpers import response_for_get_all_questions
 from app.response_helpers import response_to_fetch_single_question
-from app.response_helpers import response_for_creating_an_answer
 from app.response_helpers import response_for_get_all_answers
 from app.response_helpers import convert_user_answers_list_to_json
 
@@ -37,7 +37,7 @@ class QuestionsView(MethodView):
 
         question = Question(title=title, body=body, tag=tag)
         question_manager.insert_question(question)
-        return response_for_creating_question(
+        return response_for_returning_single_question(
             question, 201)
 
     # GET
@@ -66,11 +66,11 @@ class QuestionView(MethodView):
         if not request.content_type == 'application/json':
             return response('request must be of type json', 'failed', 400)
 
-        respo = question_manager.get_question(qtn_id)
-        if isinstance(respo, KeyError):
-            return response('Question ' + str(respo) + ' does not exist',
+        resp = question_manager.get_question(qtn_id)
+        if isinstance(resp, KeyError):
+            return response('Question ' + str(resp) + ' does not exist',
                             'failed', 400)
-        return response_to_fetch_single_question(respo.jsonify(), 200)
+        return response_to_fetch_single_question(resp.jsonify(), 200)
 
     # PATCH
     def patch(self, qtn_id):
@@ -84,9 +84,9 @@ class QuestionView(MethodView):
         if not request.content_type == 'application/json':
             return response('request must be of type json', 'failed', 400)
 
-        respo = question_manager.get_question(qtn_id)
-        if isinstance(respo, KeyError):
-            return response('Question ' + str(respo) + ' does not exist',
+        res = question_manager.get_question(qtn_id)
+        if isinstance(res, KeyError):
+            return response('Question ' + str(res) + ' does not exist',
                             'failed', 400)
 
         sent_data = request.get_json()
@@ -94,12 +94,12 @@ class QuestionView(MethodView):
         body = sent_data.get('body')
         tag = sent_data.get('tag')
         if title:
-            respo.title = title
+            res.title = title
         if body:
-            respo.body = body
+            res.body = body
         if tag:
-            respo.tag = tag
-        return response_to_fetch_single_question(respo.jsonify(), 202)
+            res.tag = tag
+        return response_to_fetch_single_question(res.jsonify(), 202)
 
     # DELETE
     def delete(self, qtn_id):
@@ -134,14 +134,14 @@ class AnswerView(MethodView):
             return response('request must be of type json', 'failed', 400)
         sent_data = request.get_json()
         body = sent_data.get('body')
-        respo = question_manager.get_question(qtn_id)
+        respon = question_manager.get_question(qtn_id)
 
-        if isinstance(respo, KeyError):
-            return response('Question ' + str(respo) + ' does not exist',
+        if isinstance(respon, KeyError):
+            return response('Question ' + str(respon) + ' does not exist',
                             'failed', 400)
-        answer = Answer(respo.id, body=body)
-        respo.answers.append(answer.make_json())
-        return response_for_creating_an_answer(respo, 201)
+        answer = Answer(respon.id, body=body)
+        respon.answers.append(answer.make_json())
+        return response_for_returning_single_question(respon, 201)
 
     # GET
     def get(self, qtn_id):
@@ -154,11 +154,11 @@ class AnswerView(MethodView):
         if not request.content_type == 'application/json':
             return response('request must be of type json', 'failed', 400)
 
-        respo = question_manager.get_question(qtn_id)
-        if isinstance(respo, KeyError):
-            return response('Question ' + str(respo) + ' does not exist',
+        respons = question_manager.get_question(qtn_id)
+        if isinstance(respons, KeyError):
+            return response('Question ' + str(respons) + ' does not exist',
                             'failed', 400)
-        answers = convert_user_answers_list_to_json(respo.answers)
+        answers = convert_user_answers_list_to_json(respons.answers)
         return response_for_get_all_answers(answers, 200)
 
 
