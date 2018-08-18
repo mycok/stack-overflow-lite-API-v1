@@ -8,7 +8,7 @@ def response(message, status, status_code):
     })), status_code
 
 
-def response_for_creating_question(question, status_code):
+def response_for_returning_single_question(question, status_code):
     return make_response(jsonify({
         'status': 'success',
         'id': question.id,
@@ -31,18 +31,6 @@ def response_to_fetch_single_question(question, status_code):
     return make_response(jsonify({
         'status': 'success',
         'question': question
-    })), status_code
-
-
-def response_for_creating_an_answer(question, status_code):
-    return make_response(jsonify({
-        'status': 'success',
-        'id': question.id,
-        'title': question.title,
-        'body': question.body,
-        'tag': question.tag,
-        'date_posted': question.posted_date,
-        'answers': question.answers
     })), status_code
 
 
