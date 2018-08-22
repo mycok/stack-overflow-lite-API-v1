@@ -47,11 +47,12 @@ class QuestionsView(MethodView):
 
         if not title or not body or not tag:
             return response('missing required parameter', 'failed', 400)
+        if title == '' or title == ' ' or body == ' ' or body == '':
+            return response('missing required parameter', 'failed', 400)
 
-        question = Question(title=title, body=body, tag=tag)
+        question = Question(title=title.strip(), body=body, tag=tag)
         question_manager.insert_question(question)
-        return response_for_returning_single_question(
-            question, 201)
+        return response_for_returning_single_question(question, 201)
 
     # GET
     def get(self):
@@ -140,7 +141,6 @@ class AnswerView(MethodView):
     def post(self, qtn_id):
         """
         POST request to create an answer to a particular question
-
         Arguments:
             MethodView {[type]} -- [description]
             qtn {[type]} -- [description]
@@ -154,7 +154,8 @@ class AnswerView(MethodView):
         message = check_for_key_error(respon)
         if message:
             return response(message, 'failed', 400)
-
+        if body == '' or body == ' ':
+            return response('missing required parameter', 'failed', 400)
         answer = Answer(respon.id, body=body)
         respon.answers.append(answer.make_json())
         return response_for_returning_single_question(respon, 201)
