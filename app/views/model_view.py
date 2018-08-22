@@ -47,8 +47,9 @@ class QuestionsView(MethodView):
 
         if not title or not body or not tag:
             return response('missing required parameter', 'failed', 400)
-        if title == '' or title == ' ' or body == ' ' or body == '':
-            return response('missing required parameter', 'failed', 400)
+        if title == '' or body == '' or title == ' ' or body == ' ':
+            return response(
+                'please provide all required parameters', 'failed', 400)
 
         question = Question(title=title.strip(), body=body, tag=tag)
         question_manager.insert_question(question)
