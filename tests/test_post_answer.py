@@ -71,3 +71,24 @@ class TestAnswerView(BaseTestCase):
             self.assertEqual(response.status_code, 400)
             self.assertRaises(KeyError)
             self.assertTrue(data['status'], 'failed')
+
+    def test_cant_create_answer_with_an_empty_string(self):
+        """
+        Test unsuccessful POST request to
+        create an answer with an out of range question id
+        """
+        with self.client:
+            # post a question
+            _ = self.create_question()
+
+            # post an answer
+            response = self.client.post(
+                '/api/v1/questions/1/answers',
+                content_type='application/json',
+                data=json.dumps(dict(body=''))
+            )
+
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 400)
+            self.assertTrue(data['message'], 'request must be of type json')
+            self.assertTrue(data['status'], 'failed')

@@ -55,3 +55,21 @@ class TestCreateQuestion(BaseTestCase):
             self.assertEqual(response.status_code, 400)
             self.assertTrue(data['message'], 'request must be of type json')
             self.assertTrue(data['status'], 'failed')
+
+    def test_cant_create_question_with_an_empty_string(self):
+        """
+         Test unsuccessful POST request to
+        create a question with wrong content type
+        """
+        with self.client:
+            response = self.client.post(
+                '/api/v1/questions',
+                content_type="application/json",
+                data=json.dumps(dict(title=' ',
+                                     body='some string', tag='Tests'))
+            )
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 400)
+            self.assertTrue(
+                data['message'], 'please provide all required parameters')
+            self.assertTrue(data['status'], 'failed')
