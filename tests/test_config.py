@@ -1,7 +1,8 @@
 import unittest
 from tests.base import BaseTestCase
-from app import create_app
+from app import app
 from app.config import TestingConfig, ProductionConfig
+from app.config import DevelopmentConfig
 
 
 class TestConfigClasses(BaseTestCase):
@@ -16,14 +17,16 @@ class TestConfigClasses(BaseTestCase):
         """
         Test development configuration
         """
-        app = create_app()
+        app = self.app
+        app.config.from_object(DevelopmentConfig)
         self.assertTrue(app.config['DEBUG'])
 
     def test_testing_config(self):
         """
         Test testing configuration
         """
-        app = create_app(TestingConfig)
+        app = self.app
+        app.config.from_object(TestingConfig)
         self.assertTrue(app.config['DEBUG'])
         self.assertTrue(app.config['TESTING'])
 
@@ -31,5 +34,6 @@ class TestConfigClasses(BaseTestCase):
         """
         Test production configuration
         """
-        app = create_app(ProductionConfig)
+        app = self.app
+        app.config.from_object(ProductionConfig)
         self.assertTrue(app.config['DEBUG'])

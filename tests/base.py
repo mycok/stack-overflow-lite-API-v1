@@ -1,6 +1,6 @@
 import unittest
 import json
-from app import create_app
+from app import app
 from app.config import TestingConfig
 
 
@@ -15,7 +15,8 @@ class BaseTestCase(unittest.TestCase):
     """
 
     def setUp(self):
-        self.app = create_app(TestingConfig)
+        self.app = app
+        self.app.config.from_object(TestingConfig)
         self.client = self.app.test_client()
 
     def create_question(self):
