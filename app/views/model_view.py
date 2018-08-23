@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask.views import MethodView
+from flasgger import swag_from
 from app.models.models import Question, Answer
 from app.models.model_manager import question_manager
 from app.response_helpers import response
@@ -12,6 +13,38 @@ from app.response_helpers import convert_user_answers_list_to_json
 
 
 qtn_bp = Blueprint('question', __name__, url_prefix='/api/v1')
+
+
+# Swagger dict:
+specs_dict = {
+  "parameters": [
+    {
+      "title": "string",
+      "body": "string"
+    }
+  ],
+  "definitions": {
+    "Question": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "Dict",
+          "items": {
+
+          }
+        }
+      }
+    },
+    "body": {
+      "type": "string"
+    }
+  },
+  "responses": {
+    "200": {
+      "description": "A list of questions (may be filtered by id)",
+      },
+    }
+  }
 
 
 # Helper function
@@ -32,6 +65,7 @@ class QuestionsView(MethodView):
     methods = ['POST', 'GET']
 
     # POST
+    @swag_from(specs_dict)
     def post(self):
         """
         POST request to create a question
@@ -56,6 +90,7 @@ class QuestionsView(MethodView):
         return response_for_returning_single_question(question, 201)
 
     # GET
+    @swag_from(specs_dict)
     def get(self):
         """
         GET request to fetch all questions
@@ -74,6 +109,7 @@ class QuestionView(MethodView):
     methods = ['GET', 'PATCH', 'DELETE']
 
     # GET
+    @swag_from(specs_dict)
     def get(self, qtn_id):
         """
         GET request to fetch a question by id
@@ -88,13 +124,14 @@ class QuestionView(MethodView):
         return response_to_fetch_single_question(resp.jsonify(), 200)
 
     # PATCH
+    @swag_from(specs_dict)
     def patch(self, qtn_id):
         """
         PATCH request to update contents
         of a question by id
 
         Arguments:
-            qtn_id {[type]} -- [description]
+            qtn_id --int-- A unique integer id assigned to a single question
         """
         if not request.content_type == 'application/json':
             return response('request must be of type json', 'failed', 400)
@@ -118,11 +155,13 @@ class QuestionView(MethodView):
         return response_to_fetch_single_question(res.jsonify(), 202)
 
     # DELETE
+    @swag_from(specs_dict)
     def delete(self, qtn_id):
         """
         DELETE request to delete a question by id
+
         Arguments:
-            qtn_id {[type]} -- [description]
+            qtn_id --int-- A unique integer id assigned to a single question
         """
         if not request.content_type == 'application/json':
             return response('request must be of type json', 'failed', 400)
@@ -138,13 +177,13 @@ class QuestionView(MethodView):
 class AnswerView(MethodView):
 
     methods = ['POST', 'GET']
-
+    @swag_from(specs_dict)
     def post(self, qtn_id):
         """
-        POST request to create an answer to a particular question
+        POST request to create an answer to a particular question.
+
         Arguments:
-            MethodView {[type]} -- [description]
-            qtn {[type]} -- [description]
+            qtn_id --int-- A unique integer id assigned to a single question
         """
         if not request.content_type == 'application/json':
             return response('request must be of type json', 'failed', 400)
@@ -162,12 +201,13 @@ class AnswerView(MethodView):
         return response_for_returning_single_question(respon, 201)
 
     # GET
+    @swag_from(specs_dict)
     def get(self, qtn_id):
         """
-        GET request to fetch all answers for a particular question
+        GET request to fetch all answers for a particular question.
 
         Arguments:
-            qtn_id {[type]} -- [description]
+            qtn_id --int-- A unique integer id assigned to a single question.
         """
         if not request.content_type == 'application/json':
             return response('request must be of type json', 'failed', 400)
