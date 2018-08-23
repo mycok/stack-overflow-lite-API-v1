@@ -33,4 +33,4 @@ class ProductionConfig(Config):
        variables necessary for production
     """
 
-    DEBUG = False
+    DEBUG = True
