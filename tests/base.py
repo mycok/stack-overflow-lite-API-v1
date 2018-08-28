@@ -1,6 +1,6 @@
 import unittest
 import json
-from app import app
+from app.ap import app
 from app.config import TestingConfig
 
 
