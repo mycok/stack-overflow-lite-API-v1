@@ -1,6 +1,6 @@
 import unittest
 from tests.base import BaseTestCase
-from app import app
+from app.ap import app
 from app.config import TestingConfig, ProductionConfig
 from app.config import DevelopmentConfig
 
